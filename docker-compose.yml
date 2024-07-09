@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: JairDel0al10!
+      MYSQL_DATABASE: LizitPTec
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  web:
+    build: .
+    container_name: fastapi
+    command: bash -c "sleep 50 && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - SQLALCHEMY_DATABASE_URL=mysql+pymysql://root:JairDel0al10!@db/LizitPTec
+
+volumes:
+  mysql-data:
+    driver: local
