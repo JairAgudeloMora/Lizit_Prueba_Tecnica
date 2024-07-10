@@ -5,14 +5,19 @@ from fastapi import HTTPException, status
 
 def create_item(item: ItemCreate) -> Item:
     item.name = item.name.capitalize()
-    
+
     existing_item = get_item_by_name(item.name)
     if existing_item:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The Item already exists"
         )
-    return create_item_repo(item)
+    if item.price < 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The item's price should be major than 0"
+        )
+    return create_item_repo(item) 
 
 def get_items() -> List[Item]:
     return get_items_repo()
